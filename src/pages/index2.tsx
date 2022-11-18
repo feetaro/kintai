@@ -13,15 +13,27 @@ import axios from 'axios'
 import { Button, ButtonGroup } from '@chakra-ui/react'
 import { Box } from '@chakra-ui/react'
 
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-const Page: NextPageWithLayout = () => { 
+type Props = {
+  item: string
+}
+
+const Page: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = (props) => {
 
   const count = useSelector((state: RootState) => state.counter.value)
   const dispatch = useDispatch()
 
+console.log(process.env.NEXT_PUBLIC_FOO);
+//console.log('item', props.item)
+
   //
   const aaa = async () => {
-    const bbb = await axios.get('https://jsonplaceholder.typicode.com/todos/1');
+    //const bbb = await axios.get('https://jsonplaceholder.typicode.com/todos/1');
+    const bbb = await axios.get('https://script.google.com/macros/s/AKfycbyCLFsDozPaiUKm5UUQb1IeN3-4e2-LtBMUTpsStPyvuaqj-Q2oR-NT5lnTD-A0d7nRtw/exec');
+  
+
+
     console.log(bbb.data);
   }
 
@@ -39,6 +51,7 @@ const Page: NextPageWithLayout = () => {
       </Box>
 
       <div>
+        <p>{props.item}</p>
         <Button
           onClick={() => dispatch(increment())}
         >
@@ -73,5 +86,16 @@ Page.getLayout = function getLayout(page: ReactElement) {
     </Layout>
   )
 }
+
+// SSR
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  //以下のconsole.logはブラウザで実行されない
+  console.log("hello next.js");
+  return {
+    props: {
+      item: "hello world",
+    },
+  };
+};
 
 export default Page
